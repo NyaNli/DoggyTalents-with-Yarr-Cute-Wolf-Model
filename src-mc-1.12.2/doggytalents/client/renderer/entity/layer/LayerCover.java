@@ -7,6 +7,7 @@ import com.google.common.base.Predicates;
 
 import doggytalents.client.renderer.entity.RenderDog;
 import doggytalents.entity.EntityDog;
+import doggytalents.lib.ConfigValues;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -23,27 +24,32 @@ public class LayerCover implements LayerRenderer<EntityDog> {
     private final RenderDog dogRenderer;
     private final ModelBase model;
     private final Function<EntityDog, ResourceLocation> resource;
+    private final Function<EntityDog, ResourceLocation> resourceCute;
     private final Predicate<EntityDog> condition;
     
-    public LayerCover(RenderDog dogRendererIn, ModelBase modelIn, Function<EntityDog, ResourceLocation> resourceIn, Predicate<EntityDog> conditionIn) {
+    public LayerCover(RenderDog dogRendererIn, ModelBase modelIn, Function<EntityDog, ResourceLocation> resourceIn, Function<EntityDog, ResourceLocation> resourceInCute, Predicate<EntityDog> conditionIn) {
         this.dogRenderer = dogRendererIn;
         this.model = modelIn;
         this.resource = resourceIn;
+        this.resourceCute = resourceInCute;
         this.condition = conditionIn;
     }
     
-    public LayerCover(RenderDog dogRendererIn, ModelBase modelIn, ResourceLocation resourceIn, Predicate<EntityDog> conditionIn) {
-        this(dogRendererIn, modelIn, dog -> resourceIn, conditionIn);
+    public LayerCover(RenderDog dogRendererIn, ModelBase modelIn, ResourceLocation resourceIn, ResourceLocation resourceInCute, Predicate<EntityDog> conditionIn) {// 2020-02-02: Add Cute Model Texture
+        this(dogRendererIn, modelIn, dog -> resourceIn, dog -> resourceInCute, conditionIn);
     }
     
-    public LayerCover(RenderDog dogRendererIn, ModelBase modelIn, ResourceLocation resourceIn) {
-        this(dogRendererIn, modelIn, resourceIn, Predicates.<EntityDog>alwaysTrue());
+    public LayerCover(RenderDog dogRendererIn, ModelBase modelIn, ResourceLocation resourceIn, ResourceLocation resourceInCute) {// 2020-02-02: Add Cute Model Texture
+        this(dogRendererIn, modelIn, resourceIn, resourceInCute, Predicates.<EntityDog>alwaysTrue());
     }
     
     @Override
     public void doRenderLayer(EntityDog dog, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         if(this.condition.test(dog) && !dog.isInvisible()) {
-            this.dogRenderer.bindTexture(this.resource.apply(dog));
+        	if (ConfigValues.USE_DT_TEXTURES)
+        		this.dogRenderer.bindTexture(this.resource.apply(dog));
+        	else
+        		this.dogRenderer.bindTexture(this.resourceCute.apply(dog)); // 2020-02-02: Add Cute Model Texture
             GlStateManager.color(1.0F, 1.0F, 1.0F);
             
             this.model.setModelAttributes(this.dogRenderer.getMainModel());

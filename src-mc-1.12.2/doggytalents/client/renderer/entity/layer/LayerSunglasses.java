@@ -3,6 +3,7 @@ package doggytalents.client.renderer.entity.layer;
 import doggytalents.client.model.entity.ModelDog;
 import doggytalents.client.renderer.entity.RenderDog;
 import doggytalents.entity.EntityDog;
+import doggytalents.lib.ConfigValues;
 import doggytalents.lib.ResourceLib;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -26,11 +27,17 @@ public class LayerSunglasses implements LayerRenderer<EntityDog> {
     @Override
     public void doRenderLayer(EntityDog dog, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         if(dog.hasSunglasses()) {
-            if(dog.world.getWorldTime() >= 12000)
-                this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_SUNGLASSES_NIGHT);
-            else
-                this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_SUNGLASSES);
-            GlStateManager.color(1.0F, 1.0F, 1.0F);
+        	if(ConfigValues.USE_DT_TEXTURES) {
+                if(dog.world.getWorldTime() >= 12000)
+                    this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_SUNGLASSES_NIGHT);
+                else
+                    this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_SUNGLASSES);
+        	} else {
+                if(dog.world.getWorldTime() >= 12000)// 2020-02-02: Add Cute Model Texture
+                    this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_SUNGLASSES_NIGHT_CUTE);
+                else
+                    this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_SUNGLASSES_CUTE);
+        	}
             this.sunglassesModel.setModelAttributes(this.dogRenderer.getMainModel());
             this.sunglassesModel.setLivingAnimations(dog, limbSwing, limbSwingAmount, partialTicks);
             this.sunglassesModel.render(dog, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);

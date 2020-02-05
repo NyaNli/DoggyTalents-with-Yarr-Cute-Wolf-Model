@@ -2,6 +2,7 @@ package doggytalents.client.renderer.entity.layer;
 
 import doggytalents.client.renderer.entity.RenderDog;
 import doggytalents.entity.EntityDog;
+import doggytalents.lib.ConfigValues;
 import doggytalents.lib.ResourceLib;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -25,7 +26,10 @@ public class LayerDogCollar implements LayerRenderer<EntityDog> {
                  GlStateManager.color(1.0F, 1.0F, 1.0F);
             }
             else if(dog.hasCollarColoured()) {
-                this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_DOG_COLLAR);
+            	if (ConfigValues.USE_DT_TEXTURES)
+            		this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_DOG_COLLAR);
+            	else
+            		this.dogRenderer.bindTexture(ResourceLib.MOB_LAYER_DOG_COLLAR_CUTE);// 2020-02-02: Add Cute Model Texture
                 if(dog.isCollarColoured()) {
                     float[] afloat = dog.getCollar();
                     GlStateManager.color(afloat[0], afloat[1], afloat[2]);

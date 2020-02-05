@@ -1,3 +1,29 @@
+I added the wolf model from "Yarr Cute Mob Models - Remake" to this mod.  (Only for src-mc-1.12.2)
+Changed class:  
+```
+doggytalents.lib.ResourceLib
+doggytalents.client.renderer.entity.RenderDog
+doggytalents.client.renderer.entity.layer.LayerBone
+doggytalents.client.renderer.entity.layer.LayerCape
+doggytalents.client.renderer.entity.layer.LayerCover
+doggytalents.client.renderer.entity.layer.LayerDogCollar
+doggytalents.client.renderer.entity.layer.LayerModel
+doggytalents.client.renderer.entity.layer.LayerRadioCollar
+doggytalents.client.renderer.entity.layer.LayerSunglasses
+```
+Added class:
+```
+doggytalents.client.model.entity.ModelChestCute
+doggytalents.client.model.entity.ModelDogCute # From "Yarr Cute Mob Models - Remake"
+doggytalents.client.model.entity.ModelProxy
+doggytalents.client.model.entity.ModelSaddleCute
+doggytalents.client.model.entity.ModelWingsCute
+```
+Added Assets:
+```
+assets/doggytalents/textures/mob/cute/*
+```
+
 Doggy Talents [![Curseforge](http://cf.way2muchnoise.eu/full_doggy-talents_downloads.svg)](https://minecraft.curseforge.com/projects/doggy-talents) [![Curseforge](http://cf.way2muchnoise.eu/versions/For%20MC_doggy-talents_all.svg)](https://minecraft.curseforge.com/projects/doggy-talents)
 ===========
 

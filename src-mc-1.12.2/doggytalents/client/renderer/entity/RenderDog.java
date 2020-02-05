@@ -5,6 +5,11 @@ import doggytalents.client.model.entity.ModelChest;
 import doggytalents.client.model.entity.ModelDog;
 import doggytalents.client.model.entity.ModelSaddle;
 import doggytalents.client.model.entity.ModelWings;
+import doggytalents.client.model.entity.ModelChestCute;
+import doggytalents.client.model.entity.ModelDogCute;
+import doggytalents.client.model.entity.ModelSaddleCute;
+import doggytalents.client.model.entity.ModelWingsCute;
+import doggytalents.client.model.entity.ModelProxy;
 import doggytalents.client.renderer.RenderUtil;
 import doggytalents.client.renderer.entity.layer.LayerBone;
 import doggytalents.client.renderer.entity.layer.LayerCape;
@@ -28,19 +33,21 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class RenderDog extends RenderLiving<EntityDog> {
     
     public RenderDog(RenderManager renderManagerIn) {
-        super(renderManagerIn, new ModelDog(0.0F), 0.5F);
+        // 2020-02-02 Edit: Use ModeProxy to decide which model to use
+        super(renderManagerIn, new ModelProxy(new ModelDog(0.0F), new ModelDogCute(0.0F)), 0.5F);
         this.addLayer(new LayerCape(this));
         this.addLayer(new LayerRadioCollar(this));
         this.addLayer(new LayerDogCollar(this));
         this.addLayer(new LayerDogHurt(this));
         this.addLayer(new LayerBone(this));
         
-        this.addLayer(new LayerCover(this, new ModelDog(0.4F), ResourceLib.MOB_LAYER_SUNGLASSES, EntityDog::hasSunglasses));
+        this.addLayer(new LayerCover(this, new ModelProxy(new ModelDog(0.4F), new ModelDogCute(0.4F)), ResourceLib.MOB_LAYER_SUNGLASSES, ResourceLib.MOB_LAYER_SUNGLASSES_CUTE, EntityDog::hasSunglasses));
         
-        this.addLayer(new LayerModel(this, new ModelDog(0.4F), ResourceLib.MOB_LAYER_ARMOR, dog -> ConfigValues.RENDER_ARMOUR && dog.TALENTS.getLevel(ModTalents.GUARD_DOG) > 0));
-        this.addLayer(new LayerModel(this, new ModelWings(), ResourceLib.MOB_LAYER_WINGS, dog -> ConfigValues.RENDER_WINGS && dog.TALENTS.getLevel(ModTalents.PILLOW_PAW) == 5));
-        this.addLayer(new LayerModel(this, new ModelSaddle(0.0F), ResourceLib.MOB_LAYER_SADDLE, dog -> ConfigValues.RENDER_SADDLE && dog.TALENTS.getLevel(ModTalents.WOLF_MOUNT) > 0));
-        this.addLayer(new LayerModel(this, new ModelChest(0.0F), ResourceLib.MOB_LAYER_CHEST, dog -> ConfigValues.RENDER_CHEST && dog.TALENTS.getLevel(ModTalents.PACK_PUPPY) > 0));
+        this.addLayer(new LayerModel(this, new ModelProxy(new ModelDog(0.4F), new ModelDogCute(0.4F)), ResourceLib.MOB_LAYER_ARMOR, ResourceLib.MOB_LAYER_ARMOR_CUTE, dog -> ConfigValues.RENDER_ARMOUR && dog.TALENTS.getLevel(ModTalents.GUARD_DOG) > 0));
+        this.addLayer(new LayerModel(this, new ModelProxy(new ModelWings(), new ModelWingsCute()), ResourceLib.MOB_LAYER_WINGS, ResourceLib.MOB_LAYER_WINGS_CUTE, dog -> ConfigValues.RENDER_WINGS && dog.TALENTS.getLevel(ModTalents.PILLOW_PAW) == 5));
+        this.addLayer(new LayerModel(this, new ModelProxy(new ModelSaddle(0.0F), new ModelSaddleCute(0.0F)), ResourceLib.MOB_LAYER_SADDLE, ResourceLib.MOB_LAYER_SADDLE_CUTE, dog -> ConfigValues.RENDER_SADDLE && dog.TALENTS.getLevel(ModTalents.WOLF_MOUNT) > 0));
+        this.addLayer(new LayerModel(this, new ModelProxy(new ModelChest(0.0F), new ModelChestCute(0.0F)), ResourceLib.MOB_LAYER_CHEST, ResourceLib.MOB_LAYER_CHEST_CUTE, dog -> ConfigValues.RENDER_CHEST && dog.TALENTS.getLevel(ModTalents.PACK_PUPPY) > 0));
+        // ===========Edit End
     }
 
     @Override
@@ -70,8 +77,11 @@ public class RenderDog extends RenderLiving<EntityDog> {
     protected ResourceLocation getEntityTexture(EntityDog dog) {
         if(ConfigValues.USE_DT_TEXTURES)
             return ResourceLib.getTameSkin(dog.getTameSkin());
-        else
-            return ResourceLib.MOB_DOG_TAME;
+        else {
+            if(dog.isTamed() && !dog.isInvisible() && (dog.getHealth() == 1 && dog.isImmortal()))
+                return ResourceLib.MOB_DOG_SAD_CUTE;
+            return ResourceLib.MOB_DOG_TAME_CUTE;
+        }
     }
     
     @Override
@@ -101,6 +111,9 @@ public class RenderDog extends RenderLiving<EntityDog> {
                 float f1 = this.renderManager.playerViewX;
                 boolean flag1 = this.renderManager.options.thirdPersonView == 2;
                 float f2 = dog.height + 0.42F - (flag ? 0.25F : 0.0F) - (dog.isPlayerSleeping() ? 0.5F : 0);
+                if (!ConfigValues.USE_DT_TEXTURES && !dog.isChild()) { // modify label pos when use cute model
+                    f2 += 0.5F;
+                }
         
                 RenderUtil.renderLabelWithScale(this.getFontRendererFromRenderManager(), label, (float)x, (float)y + f2, (float)z, 0, f, f1, flag1, flag, 0.01F);
                 RenderUtil.renderLabelWithScale(this.getFontRendererFromRenderManager(), dog.getDisplayName().getFormattedText(), (float)x, (float)y + f2 - 0.12F, (float)z, 0, f, f1, flag1, flag, 0.026F);
